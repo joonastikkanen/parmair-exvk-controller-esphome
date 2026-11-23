@@ -4,6 +4,15 @@ This dashboard connects to Home Assistant; it is not a UI mockup. The card
 shows a power-based fan-level estimate and sends one short ESPHome button
 press at a time. It does not automatically set a target speed.
 
+## Example screenshot
+
+![Installed dashboard with three active fan-level segments and button controls](../photos/dashboard-screenshot.png)
+
+The running installation shown here uses Finnish labels; the repository's
+card and examples use English. The screenshot shows an estimated level
+of **3 / 5** at **107.7 W**, enabled control, a connected controller, and
+the house and power buttons. The level is power-based, not direct fan feedback.
+
 ## 1. Prerequisites and entity IDs
 
 Install the [ESPHome controller](getting-started.md) and [power sensors](power-sensor.md)

@@ -16,6 +16,14 @@ See the [installation photos and limitations](photos/README.md) for the current 
 > photo is no longer included. Check your own unit and controller: a shared
 > manufacturer name does not guarantee identical wiring.
 
+## Dashboard preview
+
+![Home Assistant dashboard showing estimated fan level 3 of 5 at 107.7 W](photos/dashboard-screenshot.png)
+
+Screenshot of the running installation with Finnish labels. The card source
+and example configuration in this repository use English labels.
+See the [dashboard guide](docs/dashboard.md) for installation and usage.
+
 ## Start here
 
 1. [Installation from scratch](docs/getting-started.md) – hardware, measurements,

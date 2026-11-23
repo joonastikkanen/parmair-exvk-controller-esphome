@@ -15,6 +15,7 @@ links. Check metadata and visible labels again before adding new photos.
 | [IMG_20261121_093746592.jpg](IMG_20261121_093746592.jpg) | Current build: added PCB wires and solder joints |
 | [IMG_20261121_093800325.jpg](IMG_20261121_093800325.jpg) | Current build: XIAO ESP32-C3 wiring |
 | [IMG_20261121_095113057.jpg](IMG_20261121_095113057.jpg) | Current build: XIAO and wiring inside the enclosure |
+| [dashboard-screenshot.png](dashboard-screenshot.png) | Home Assistant dashboard: estimated level 3/5 at 107.7 W, Finnish installation labels |
 
 ## Current build
 
