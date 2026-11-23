@@ -1,0 +1,125 @@
+# One Lovelace view: append to the existing dashboard's views list.
+# Check your HA installation's entity IDs before saving.
+title: Utility room
+path: kodinhoitohuone
+icon: mdi:washing-machine
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    column_span: 2
+    cards:
+      - type: custom:parmair-speed-card
+        entity: sensor.parmair_detected_fan_level
+        power_entity: sensor.shelly_plug_s_g3_ilmanvaihtokone_power
+        mean_entity: sensor.parmair_power_mean_20s
+        online_entity: binary_sensor.parmair_yhteys
+        enable_entity: switch.parmair_painikeohjaus_sallittu
+        minus_entity: button.parmair_nopeus_miinus
+        plus_entity: button.parmair_nopeus_plus
+        grid_options:
+          columns: full
+          rows: auto
+      - type: tile
+        entity: switch.parmair_painikeohjaus_sallittu
+        name: Enable control
+        icon: mdi:shield-lock-outline
+        tap_action:
+          action: toggle
+        icon_tap_action:
+          action: toggle
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: tile
+        entity: binary_sensor.parmair_yhteys
+        name: Controller connection
+        icon: mdi:lan-connect
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: heading
+        heading: Other controls
+        heading_style: subtitle
+        icon: mdi:tune
+        grid_options:
+          columns: full
+      - type: tile
+        entity: button.parmair_talopainike
+        name: House button
+        icon: mdi:home-outline
+        hide_state: true
+        tap_action: &home_action
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.parmair_talopainike
+        icon_tap_action: *home_action
+        visibility: &controls_visible
+          - condition: state
+            entity: binary_sensor.parmair_yhteys
+            state: "on"
+          - condition: state
+            entity: switch.parmair_painikeohjaus_sallittu
+            state: "on"
+        grid_options:
+          columns: 12
+          rows: 1
+      - type: tile
+        entity: button.parmair_virta_0_1
+        name: Power 0/1
+        icon: mdi:power
+        color: red
+        hide_state: true
+        tap_action: &power_action
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.parmair_virta_0_1
+          confirmation:
+            text: Send a power 0/1 press to the unit? Its current power state is unknown.
+        icon_tap_action: *power_action
+        visibility: *controls_visible
+        grid_options:
+          columns: 12
+          rows: 1
+  - type: grid
+    cards:
+      - type: heading
+        heading: Controller diagnostics
+        icon: mdi:chip
+      - type: tile
+        entity: sensor.parmair_wi_fi_signaali
+        name: Wi-Fi signal
+        icon: mdi:wifi
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.parmair_kayntiaika
+        name: Uptime
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: sensor.parmair_ip_osoite
+        name: IP address
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: binary_sensor.parmair_ntp_aika_kelvollinen
+        name: Clock synchronization
+        icon: mdi:clock-check-outline
+        grid_options:
+          columns: 6
+      - type: tile
+        entity: button.parmair_ilmanvaihtokone_kaynnista_ohjain_uudelleen
+        name: Restart ESP32
+        icon: mdi:restart
+        hide_state: true
+        tap_action: &restart_action
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.parmair_ilmanvaihtokone_kaynnista_ohjain_uudelleen
+          confirmation:
+            text: Restart the ESP32? The connection will briefly drop and button control will be locked.
+        icon_tap_action: *restart_action

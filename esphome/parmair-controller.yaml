@@ -1,0 +1,200 @@
+# Direct active-LOW open-drain control; owner-confirmed common ground.
+# Press = LOW, release = high impedance. No active HIGH drive.
+# Beware GPIO back-powering when the Parmair is powered and the XIAO is not.
+# Installed supply: 12 V to 5 V buck converter directly to XIAO 5V and GND pins.
+# USB is for initial programming/tests, not the installed power connection.
+# All controls locked after every boot.
+esphome:
+  name: parmair-controller
+  friendly_name: Parmair Ventilation Unit
+
+esp32:
+  board: seeed_xiao_esp32c3
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: !secret parmair_api_key
+
+ota:
+  - platform: esphome
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: Parmair Fallback
+    password: !secret fallback_password
+
+captive_portal:
+
+time:
+  - platform: sntp
+    id: ntp_time
+    timezone: Europe/Helsinki
+    servers:
+      - 0.fi.pool.ntp.org
+      - 1.fi.pool.ntp.org
+      - 2.fi.pool.ntp.org
+
+sensor:
+  - platform: wifi_signal
+    name: Wi-Fi RSSI
+    id: wifi_rssi
+    update_interval: 60s
+    entity_category: diagnostic
+  - platform: copy
+    source_id: wifi_rssi
+    name: Wi-Fi signal
+    unit_of_measurement: "%"
+    device_class: ""
+    entity_category: diagnostic
+    filters:
+      - lambda: return min(max(2.0f * (x + 100.0f), 0.0f), 100.0f);
+  - platform: uptime
+    name: Uptime
+    update_interval: 60s
+    entity_category: diagnostic
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP address
+      entity_category: diagnostic
+    ssid:
+      name: Wi-Fi SSID
+      entity_category: diagnostic
+    bssid:
+      name: Wi-Fi BSSID
+      entity_category: diagnostic
+    mac_address:
+      name: MAC address
+      entity_category: diagnostic
+  - platform: template
+    name: NTP time
+    entity_category: diagnostic
+    update_interval: 30s
+    lambda: |-
+      auto now = id(ntp_time).now();
+      if (!now.is_valid()) return {"Not synchronized"};
+      return now.strftime("%Y-%m-%d %H:%M:%S %Z");
+
+binary_sensor:
+  - platform: status
+    name: Connection
+    entity_category: diagnostic
+  - platform: template
+    name: NTP time valid
+    entity_category: diagnostic
+    lambda: return id(ntp_time).now().is_valid();
+
+switch:
+  - platform: template
+    id: controls_enabled
+    name: Button control enabled
+    entity_category: config
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    id: key_minus
+    internal: true
+    pin:
+      number: GPIO3
+      inverted: true
+      mode:
+        output: true
+        open_drain: true
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    id: key_plus
+    internal: true
+    pin:
+      number: GPIO4
+      inverted: true
+      mode:
+        output: true
+        open_drain: true
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    id: key_home
+    internal: true
+    pin:
+      number: GPIO5
+      inverted: true
+      mode:
+        output: true
+        open_drain: true
+    restore_mode: ALWAYS_OFF
+  - platform: gpio
+    id: key_power
+    internal: true
+    pin:
+      number: GPIO6
+      inverted: true
+      mode:
+        output: true
+        open_drain: true
+    restore_mode: ALWAYS_OFF
+
+# The shared script rejects overlapping commands instead of queueing presses.
+# Disabling control blocks new pulses; an active pulse completes after 200 ms.
+script:
+  - id: press_key
+    mode: single
+    parameters:
+      key: int
+    then:
+      - if:
+          condition:
+            switch.is_on: controls_enabled
+          then:
+            - lambda: |-
+                switch (key) {
+                  case 1: id(key_minus).turn_on(); break;
+                  case 2: id(key_plus).turn_on(); break;
+                  case 3: id(key_home).turn_on(); break;
+                  case 4: id(key_power).turn_on(); break;
+                }
+            - delay: 200ms
+            - switch.turn_off: key_minus
+            - switch.turn_off: key_plus
+            - switch.turn_off: key_home
+            - switch.turn_off: key_power
+            - delay: 200ms
+
+button:
+  - platform: restart
+    id: restart_controller
+    name: Restart controller
+    entity_category: diagnostic
+  - platform: template
+    id: minus_button
+    name: Speed minus
+    on_press:
+      - script.execute:
+          id: press_key
+          key: 1
+  - platform: template
+    id: plus_button
+    name: Speed plus
+    on_press:
+      - script.execute:
+          id: press_key
+          key: 2
+  - platform: template
+    id: home_button
+    name: House button
+    on_press:
+      - script.execute:
+          id: press_key
+          key: 3
+  - platform: template
+    id: power_button
+    name: Power 0-1
+    on_press:
+      - script.execute:
+          id: press_key
+          key: 4

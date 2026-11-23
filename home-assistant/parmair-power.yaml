@@ -1,0 +1,52 @@
+# Home Assistant package, not an ESPHome configuration.
+# Do not install the statistics section if the same UI helper already exists.
+sensor:
+  - platform: statistics
+    name: Parmair power mean 20s
+    unique_id: parmair_power_mean_20s
+    entity_id: sensor.shelly_plug_s_g3_ilmanvaihtokone_power
+    state_characteristic: mean
+    max_age:
+      seconds: 20
+    keep_last_sample: true
+    precision: 2
+
+template:
+  - sensor:
+      - name: Parmair detected fan level
+        unique_id: parmair_detected_fan_level
+        default_entity_id: sensor.parmair_detected_fan_level
+        icon: mdi:fan
+        state: >-
+          {% set raw = states('sensor.shelly_plug_s_g3_ilmanvaihtokone_power') %}
+          {% set mean = states('sensor.parmair_power_mean_20s') %}
+          {% if not is_number(raw) or not is_number(mean) %}
+            Unknown
+          {% elif not (20 <= raw | float <= 220)
+               or not (20 <= mean | float <= 220) %}
+            Unknown
+          {% else %}
+            {% set power = mean | float %}
+            {% if power < 63.5 %}1
+            {% elif power < 99 %}2
+            {% elif power < 114.5 %}3
+            {% elif power < 141 %}4
+            {% else %}5
+            {% endif %}
+          {% endif %}
+        attributes:
+          measured_power: >-
+            {% set power = states('sensor.shelly_plug_s_g3_ilmanvaihtokone_power') %}
+            {{ power | float if is_number(power) else none }}
+          smoothed_power: >-
+            {% set power = states('sensor.parmair_power_mean_20s') %}
+            {{ power | float if is_number(power) else none }}
+          source_entity: sensor.shelly_plug_s_g3_ilmanvaihtokone_power
+          power_unit: W
+          detection_method: electrical_power
+          smoothing_window_seconds: 20
+          description: >-
+            Fan-level estimate based on electrical power.
+            Post-heating may distort the estimate.
+            Unknown means a missing measurement
+            or power outside the estimation range.

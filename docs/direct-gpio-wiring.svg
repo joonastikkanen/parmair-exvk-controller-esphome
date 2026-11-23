@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680">
+<style>text{font-family:Arial,sans-serif;font-size:19px;fill:#142b43}.title{font-size:29px;font-weight:bold}.small{font-size:16px}.wire{fill:none;stroke:#2874b8;stroke-width:4}</style>
+<rect width="1200" height="680" fill="#fff"/>
+<text x="35" y="45" class="title">Parmair — direct open-drain GPIO control</text>
+<text x="35" y="78">Owner-confirmed common GND · 200 ms LOW pulse · No relays</text>
+<rect x="440" y="160" width="310" height="370" rx="20" fill="#dcecf3" stroke="#23516c" stroke-width="3"/>
+<rect x="530" y="145" width="130" height="45" rx="7" fill="#d3d9df" stroke="#23516c"/>
+<text x="595" y="176" text-anchor="middle" class="small">5V / GND pins</text>
+<text x="595" y="235" text-anchor="middle" class="title">XIAO ESP32-C3</text>
+<text x="595" y="267" text-anchor="middle" class="small">Functional diagram, not physical pinout</text>
+<text x="470" y="320">D1 / GPIO3</text><text x="470" y="365">D2 / GPIO4</text>
+<text x="470" y="410">D3 / GPIO5</text><text x="470" y="455">D4 / GPIO6</text>
+<text x="470" y="500">GND</text>
+<rect x="30" y="125" width="310" height="95" rx="12" fill="#f2f6fb" stroke="#60758e"/>
+<text x="50" y="158">12 V → 5 V buck converter</text>
+<text x="50" y="193" class="small">Output directly to 5V / GND pins</text>
+<path d="M340 170 H440 V115 H595 V145" fill="none" stroke="#c84141" stroke-width="3"/>
+<rect x="920" y="220" width="250" height="310" rx="12" fill="#f2f6fb" stroke="#60758e"/>
+<text x="945" y="260" class="title">Parmair</text>
+<text x="945" y="290" class="small">Keypad pins</text>
+<text x="945" y="320">1 · Minus</text><text x="945" y="365">2 · Plus</text>
+<text x="945" y="410">3 · House</text><text x="945" y="455">4 · Power 0/1</text>
+<text x="945" y="500">5 · Verified GND</text>
+<path d="M750 315 H920 M750 360 H920 M750 405 H920 M750 450 H920" class="wire"/>
+<path d="M750 495 H920" fill="none" stroke="#455466" stroke-width="4"/>
+<text x="35" y="300">ON = pulls to GND</text>
+<text x="35" y="335">OFF = high impedance</text>
+<text x="35" y="385" class="small">Original buttons remain in parallel.</text>
+<text x="35" y="420" class="small">GPIO does not drive the signal HIGH.</text>
+<text x="35" y="455" class="small">Only compatible ~+3 V pull-down signals.</text>
+<text x="35" y="490" class="small">No galvanic isolation.</text>
+<text x="35" y="580">WARNING: Parmair may back-power an unpowered XIAO through GPIOs.</text>
+<text x="35" y="615">Do not leave signals connected with Parmair powered and XIAO unpowered without protection.</text>
+<text x="35" y="650" class="small">Verify polarity, current, and boot/reset behavior. Wire de-energized. Start with one button.</text>
+</svg>

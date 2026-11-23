@@ -1,0 +1,19 @@
+**/secrets.yaml
+**/.esphome/
+.venv/
+__pycache__/
+node_modules/
+.DS_Store
+
+# Local credentials, Home Assistant state, and generated/private artifacts.
+.env
+.env.*
+!.env.example
+**/secrets.*.yaml
+!**/secrets.example.yaml
+**/.storage/
+*.key
+*.pem
+*.log
+*.bak
+*.backup
