@@ -7,6 +7,8 @@ displayed as five segments with slower/faster controls on the dashboard.
 
 ![Original Parmair by Airwise wall controller](photos/IMG_20261029_171347203.jpg)
 
+![Current build: added PCB wires and solder joints](photos/IMG_20261121_093746592.jpg)
+
 See the [installation photos and limitations](photos/README.md) for the current build.
 
 > **Unit model:** the repository name historically refers to EXVK. A previously
